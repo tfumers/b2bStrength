@@ -1,4 +1,4 @@
-package com.toGames.b2bStrength.models;
+package com.toGames.b2bStrength.models.users;
 
 import org.hibernate.annotations.GenericGenerator;
 

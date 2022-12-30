@@ -1,10 +1,12 @@
-package com.toGames.b2bStrength.models;
+package com.toGames.b2bStrength.models.trainers;
+
+import com.toGames.b2bStrength.models.users.GenericUser;
 
 import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
 @Entity
-public class Trainer extends GenericUser{
+public class Trainer extends GenericUser {
 
     private long typeId;
 
