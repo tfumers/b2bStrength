@@ -2,11 +2,9 @@ package com.toGames.b2bStrength.models.routines;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 public class Daily {
@@ -16,7 +14,12 @@ public class Daily {
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
-    private long routineId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "routine_id")
+    private Routine routine;
+
+    @OneToMany(mappedBy = "dailyActivity", fetch = FetchType.EAGER)
+    private Set<Activity> activities;
 
     private int dayNumber;
 
@@ -28,7 +31,6 @@ public class Daily {
     }
 
     public Daily(long routineId, int dayNumber, LocalDate proposedDate, LocalDate completionDate) {
-        this.routineId = routineId;
         this.dayNumber = dayNumber;
         this.proposedDate = proposedDate;
         this.completionDate = completionDate;
@@ -40,14 +42,6 @@ public class Daily {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public long getRoutineId() {
-        return routineId;
-    }
-
-    public void setRoutineId(long routineId) {
-        this.routineId = routineId;
     }
 
     public int getDayNumber() {

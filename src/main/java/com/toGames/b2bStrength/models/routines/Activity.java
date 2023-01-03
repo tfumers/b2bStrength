@@ -1,11 +1,9 @@
 package com.toGames.b2bStrength.models.routines;
 
+import com.toGames.b2bStrength.models.trainings.Training;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Activity {
@@ -15,13 +13,20 @@ public class Activity {
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
-    private long dailyId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "daily_id")
+    private Daily dailyActivity;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "training_id")
+    private Training training;
 
     public int orderNumber;
 
-    private long trainingId;
 
-    private long typeId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "type_id")
+    private ActivityType type;
 
     private long typeValue;
 
@@ -29,10 +34,7 @@ public class Activity {
     }
 
     public Activity(long dailyId, int orderNumber, long trainingId, long typeId, long typeValue) {
-        this.dailyId = dailyId;
         this.orderNumber = orderNumber;
-        this.trainingId = trainingId;
-        this.typeId = typeId;
         this.typeValue = typeValue;
     }
 
@@ -44,36 +46,12 @@ public class Activity {
         this.id = id;
     }
 
-    public long getDailyId() {
-        return dailyId;
-    }
-
-    public void setDailyId(long dailyId) {
-        this.dailyId = dailyId;
-    }
-
     public int getOrderNumber() {
         return orderNumber;
     }
 
     public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
-    }
-
-    public long getTrainingId() {
-        return trainingId;
-    }
-
-    public void setTrainingId(long trainingId) {
-        this.trainingId = trainingId;
-    }
-
-    public long getTypeId() {
-        return typeId;
-    }
-
-    public void setTypeId(long typeId) {
-        this.typeId = typeId;
     }
 
     public long getTypeValue() {

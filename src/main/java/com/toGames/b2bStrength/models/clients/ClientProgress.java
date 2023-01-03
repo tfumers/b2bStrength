@@ -2,10 +2,7 @@ package com.toGames.b2bStrength.models.clients;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,11 +10,13 @@ public class ClientProgress {
 
 //  relacionar el client_id
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @Column(name = "client_id")
     private long id;
 
-
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "client_id")
+    private Client client;
 
     private long caloriesBurned;
 
@@ -49,6 +48,14 @@ public class ClientProgress {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public long getCaloriesBurned() {
