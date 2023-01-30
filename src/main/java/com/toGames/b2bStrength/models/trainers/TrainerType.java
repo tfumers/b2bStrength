@@ -2,10 +2,8 @@ package com.toGames.b2bStrength.models.trainers;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class TrainerType {
@@ -15,6 +13,8 @@ public class TrainerType {
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
+    @OneToMany(mappedBy = "type", fetch = FetchType.EAGER)
+    private Set<Trainer> trainers;
     private String type;
 
     public TrainerType() {
