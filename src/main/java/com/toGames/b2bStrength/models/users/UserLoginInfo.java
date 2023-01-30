@@ -1,5 +1,6 @@
 package com.toGames.b2bStrength.models.users;
 
+import com.toGames.b2bStrength.models.clients.Client;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -10,9 +11,13 @@ public class UserLoginInfo {
 
 //    relacionarlo con el user_id generico
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @Column(name = "user_id")
     private long id;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "user_id")
+    private GenericUser user;
 
     private long typeId;
 
@@ -42,6 +47,22 @@ public class UserLoginInfo {
         this.lastLogin = lastLogin;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public GenericUser getUser() {
+        return user;
+    }
+
+    public void setUser(GenericUser user) {
+        this.user = user;
     }
 
     public long getTypeId() {

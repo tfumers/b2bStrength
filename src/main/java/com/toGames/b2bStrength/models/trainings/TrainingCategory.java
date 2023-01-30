@@ -2,26 +2,27 @@ package com.toGames.b2bStrength.models.trainings;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-public class CategoryTraining {
+public class TrainingCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
+    @OneToMany(mappedBy="category", fetch= FetchType.EAGER)
+    private Set<TrainingCategoryRelation> trainingCategoryRelations;
+
     private String name;
 
     private String description;
 
-    public CategoryTraining() {
+    public TrainingCategory() {
     }
 
-    public CategoryTraining(String name, String description) {
+    public TrainingCategory(String name, String description) {
         this.name = name;
         this.description = description;
     }

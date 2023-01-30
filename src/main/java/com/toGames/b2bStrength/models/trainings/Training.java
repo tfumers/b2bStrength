@@ -1,12 +1,11 @@
 package com.toGames.b2bStrength.models.trainings;
 
+import com.toGames.b2bStrength.models.routines.Activity;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 public class Training {
@@ -14,6 +13,12 @@ public class Training {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
+
+    @OneToMany(mappedBy="training", fetch= FetchType.EAGER)
+    private Set<Activity> activities;
+
+    @OneToMany(mappedBy="training", fetch= FetchType.EAGER)
+    private Set<TrainingCategoryRelation> trainingCategoryRelations;
 
     private String name;
 
