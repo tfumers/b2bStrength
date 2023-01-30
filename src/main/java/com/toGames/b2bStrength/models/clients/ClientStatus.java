@@ -2,10 +2,8 @@ package com.toGames.b2bStrength.models.clients;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class ClientStatus {
@@ -16,6 +14,9 @@ public class ClientStatus {
     private long id;
 
     private String Status;
+
+    @OneToMany(mappedBy="status", fetch= FetchType.EAGER)
+    private Set<Client> clients;
 
     public ClientStatus() {
     }

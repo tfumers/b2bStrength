@@ -1,17 +1,27 @@
 package com.toGames.b2bStrength.models.users;
 
+import com.toGames.b2bStrength.models.clients.ClientStatus;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class GenericUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private UserLoginInfo loginInfo;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "nationality_id")
+    private Nationality nationality;
 
     private String username;
 
@@ -20,8 +30,6 @@ public abstract class GenericUser {
     private String lastname;
 
     private char sex;
-
-    private long nationality_id;
 
     private String icon;
 
@@ -39,7 +47,6 @@ public abstract class GenericUser {
         this.firstname = firstname;
         this.lastname = lastname;
         this.sex = sex;
-        this.nationality_id = nationality_id;
         this.icon = icon;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -51,6 +58,22 @@ public abstract class GenericUser {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public UserLoginInfo getLoginInfo() {
+        return loginInfo;
+    }
+
+    public void setLoginInfo(UserLoginInfo loginInfo) {
+        this.loginInfo = loginInfo;
+    }
+
+    public Nationality getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(Nationality nationality) {
+        this.nationality = nationality;
     }
 
     public String getUsername() {
@@ -83,14 +106,6 @@ public abstract class GenericUser {
 
     public void setSex(char sex) {
         this.sex = sex;
-    }
-
-    public long getNationality_id() {
-        return nationality_id;
-    }
-
-    public void setNationality_id(long nationality_id) {
-        this.nationality_id = nationality_id;
     }
 
     public String getIcon() {

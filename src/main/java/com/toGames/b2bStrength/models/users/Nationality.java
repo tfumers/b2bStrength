@@ -2,10 +2,8 @@ package com.toGames.b2bStrength.models.users;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Nationality {
@@ -14,6 +12,9 @@ public class Nationality {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
+
+    @OneToMany(mappedBy="nationality", fetch= FetchType.EAGER)
+    private Set<GenericUser> user;
 
     private String nationality;
 
@@ -40,4 +41,11 @@ public class Nationality {
         this.nationality = nationality;
     }
 
+    public Set<GenericUser> getUser() {
+        return user;
+    }
+
+    public void setUser(Set<GenericUser> user) {
+        this.user = user;
+    }
 }

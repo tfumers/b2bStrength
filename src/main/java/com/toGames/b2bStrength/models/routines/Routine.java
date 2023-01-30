@@ -1,12 +1,11 @@
 package com.toGames.b2bStrength.models.routines;
 
+import com.toGames.b2bStrength.models.clients.ClientStatus;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 public class Routine {
@@ -16,7 +15,15 @@ public class Routine {
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
-    private long statusId;
+    @OneToMany(mappedBy="routine", fetch= FetchType.EAGER)
+    private Set<TrainerClientRelation> trainerClientRelations;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "status_id")
+    private RoutineStatus status;
+
+    @OneToMany(mappedBy = "routine", fetch = FetchType.EAGER)
+    private Set<Daily> dailyActivities;
 
     private long numOfDays;
 
@@ -28,7 +35,6 @@ public class Routine {
     }
 
     public Routine(long statusId, long numOfDays, LocalDate startDate, LocalDate endDate) {
-        this.statusId = statusId;
         this.numOfDays = numOfDays;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -40,14 +46,6 @@ public class Routine {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public long getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(long statusId) {
-        this.statusId = statusId;
     }
 
     public long getNumOfDays() {
