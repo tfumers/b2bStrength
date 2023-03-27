@@ -27,7 +27,9 @@ public class TrainingCategoryRelation {
     public TrainingCategoryRelation() {
     }
 
-    public TrainingCategoryRelation(long trainingId, long categoryId, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public TrainingCategoryRelation(Training training, TrainingCategory trainingCategory, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.training = training;
+        this.category =trainingCategory;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -54,5 +56,21 @@ public class TrainingCategoryRelation {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Training getTraining() {
+        return training;
+    }
+
+    public void setTraining(Training training) {
+        this.training = training;
+    }
+
+    public TrainingCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(TrainingCategory category) {
+        this.category = category;
     }
 }
