@@ -1,24 +1,25 @@
 package com.toGames.b2bStrength.models.trainings;
 
+import com.toGames.b2bStrength.models.commons.DatabaseCommon;
 import com.toGames.b2bStrength.models.routines.Activity;
-import org.hibernate.annotations.GenericGenerator;
+import com.toGames.b2bStrength.utils.Common;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
-public class Training {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private long id;
+public class Training extends DatabaseCommon {
 
     @OneToMany(mappedBy="training", fetch= FetchType.EAGER)
     private Set<Activity> activities;
 
     @OneToMany(mappedBy="training", fetch= FetchType.EAGER)
     private Set<TrainingCategoryRelation> trainingCategoryRelations;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "difficulty_id")
+    private TrainingDifficulty difficulty;
 
     private String name;
 
@@ -28,38 +29,25 @@ public class Training {
 
     private String imageUrl;
 
-    private long difficultyId;
 
     private int estTimePerRep;
 
     private int estCaloriesPerRep;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
     public Training() {
     }
 
-    public Training(String name, String description, String videoUrl, String imageUrl, long difficultyId, int estTimePerRep, int estCaloriesPerRep, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Training(LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isEnabled, String name, String description, String videoUrl, String imageUrl, int estTimePerRep, int estCaloriesPerRep) {
+        super(createdAt, updatedAt, isEnabled);
         this.name = name;
         this.description = description;
         this.videoUrl = videoUrl;
         this.imageUrl = imageUrl;
-        this.difficultyId = difficultyId;
         this.estTimePerRep = estTimePerRep;
         this.estCaloriesPerRep = estCaloriesPerRep;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
-    public long getId() {
-        return id;
-    }
 
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -93,12 +81,12 @@ public class Training {
         this.imageUrl = imageUrl;
     }
 
-    public long getDifficultyId() {
-        return difficultyId;
+    public TrainingDifficulty getDifficulty() {
+        return difficulty;
     }
 
-    public void setDifficultyId(long difficultyId) {
-        this.difficultyId = difficultyId;
+    public void setDifficulty(TrainingDifficulty difficulty) {
+        this.difficulty = difficulty;
     }
 
     public int getEstTimePerRep() {
@@ -117,19 +105,23 @@ public class Training {
         this.estCaloriesPerRep = estCaloriesPerRep;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public Set<Activity> getActivities() {
+        return activities;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setActivities(Set<Activity> activities) {
+        this.activities = activities;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public Set<TrainingCategoryRelation> getTrainingCategoryRelations() {
+        return trainingCategoryRelations;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void addCategory(TrainingCategory trainingCategory){
+        this.trainingCategoryRelations.add(new TrainingCategoryRelation(this, trainingCategory, Common.setCurrentTime(), Common.setCurrentTime()));
+    }
+
+    public void setTrainingCategoryRelations(Set<TrainingCategoryRelation> trainingCategoryRelations) {
+        this.trainingCategoryRelations = trainingCategoryRelations;
     }
 }

@@ -3,36 +3,33 @@ package com.toGames.b2bStrength.models.trainings;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class TrainingCategory {
+public class TrainingDifficulty {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
-    @OneToMany(mappedBy="category", fetch= FetchType.EAGER)
-    private Set<TrainingCategoryRelation> trainingCategoryRelations;
+    @OneToMany(mappedBy = "difficulty", fetch = FetchType.EAGER)
+    private Set<Training> trainings = new HashSet<>();
 
     private String name;
 
     private String description;
 
-    public TrainingCategory() {
+    public TrainingDifficulty() {
     }
 
-    public TrainingCategory(String name, String description) {
+    public TrainingDifficulty(String name, String description) {
         this.name = name;
         this.description = description;
     }
 
     public long getId() {
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -51,7 +48,7 @@ public class TrainingCategory {
         this.description = description;
     }
 
-    public Set<TrainingCategoryRelation> getTrainingCategoryRelations() {
-        return trainingCategoryRelations;
+    public Set<Training> getTrainings() {
+        return trainings;
     }
 }
