@@ -9,24 +9,26 @@ import java.util.Optional;
 
 public interface TrainingService {
 
-    List<DetailedTrainingDTO> getTrainingsByParams(TrainingSearchParamsDTO paramsDTO);
-    Optional<DetailedTrainingDTO> getTrainingById(Long id);
+    List<DetailedTrainingOutDTO> getTrainingsByParams(TrainingSearchParamsDTO paramsDTO);
+    Optional<DetailedTrainingOutDTO> getTrainingById(Long id);
 
-    List<DetailedTrainingDTO> findByNameContainsOrderById(String name);
+    List<DetailedTrainingOutDTO> findByNameContainsOrderById(String name);
 
-    List<DetailedTrainingDTO> getTrainingsByCategory(String category);
+    List<DetailedTrainingOutDTO> getTrainingsByCategory(String category);
 
     Optional<DetailedTrainingCategoryDTO> createNewCategory(NewCategoryDTO newCategoryDTO);
 
     Optional<DetailedTrainingDifficultyDTO> createNewDifficulty(NewDifficultyDTO newDifficultyDTO);
 
-    Optional<DetailedTrainingDTO> createNewTraining(NewTrainingDTO newTrainingDTO);
+    Optional<DetailedTrainingOutDTO> createNewTraining(NewTrainingDTO newTrainingDTO);
 
-    Optional<DetailedTrainingDTO> updateTraining(JsonPatch newTrainingPatch, Long id);
+    Optional<DetailedTrainingOutDTO> updateTraining(JsonPatch newTrainingPatch, Long id);
 
     String deleteTrainingById(Long id);
 
     String deleteCategoryById(Long id);
 
     String deleteDifficultyById(Long id);
+
+    List<DetailedTrainingOutDTO> getTrainingsById(TrainingsInDTO trainingIds);
 }

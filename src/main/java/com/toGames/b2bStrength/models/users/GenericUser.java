@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,18 +37,21 @@ public abstract class GenericUser {
 
     private String lastname;
 
+    private LocalDate birthDate;
+
     private int phone;
 
     private char sex;
 
     private String icon;
 
-    public GenericUser(String username, String firstname, String lastname, int phone, char sex, String icon) {
+    public GenericUser(String username, String firstname, String lastname, int phone, char sex, String icon, LocalDate birthDate) {
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
         this.phone = phone;
         this.sex = sex;
         this.icon = icon;
+        this.birthDate = birthDate;
     }
 }

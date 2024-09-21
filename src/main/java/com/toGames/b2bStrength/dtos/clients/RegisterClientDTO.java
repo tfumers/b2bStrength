@@ -23,15 +23,19 @@ public class RegisterClientDTO {
     @NotBlank
     private String username;
 
+    @NotBlank
     private String firstname;
 
+    @NotBlank
     private String lastname;
 
-    private int dni;
+    private String birthDate;
 
-    private int phone;
+    private String dni;
 
-    private char sex;
+    private String phone;
+
+    private String sex;
 
     private String icon;
 

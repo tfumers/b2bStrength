@@ -2,12 +2,21 @@ package com.toGames.b2bStrength.models.routines;
 
 import com.toGames.b2bStrength.models.clients.Client;
 import com.toGames.b2bStrength.models.trainers.Trainer;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class TrainerClientRelation {
 
     @Id
@@ -19,14 +28,17 @@ public class TrainerClientRelation {
     @JoinColumn(name = "trainer_id")
     private Trainer trainer;
 
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "routine_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "routine_id", referencedColumnName = "id")
     private Routine routine;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "status_id")
+    private TrainerClientRelationStatus status;
 
     private String objective;
 
@@ -36,10 +48,11 @@ public class TrainerClientRelation {
 
     private LocalDateTime updatedAt;
 
-    public TrainerClientRelation() {
-    }
-
-    public TrainerClientRelation(long trainerId, long clientId, long routineId, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public TrainerClientRelation(Trainer trainer, Client client, String objective, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.trainer = trainer;
+        this.client = client;
+        this.objective = objective;
+        this.description = description;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

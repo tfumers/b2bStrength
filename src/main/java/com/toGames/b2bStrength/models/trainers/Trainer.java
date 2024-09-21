@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -17,14 +19,21 @@ import java.util.Set;
 public class Trainer extends GenericUser {
 
     @OneToMany(mappedBy="trainer", fetch= FetchType.EAGER)
-    private Set<TrainerClientRelation> trainerClientRelations;
+    private Set<TrainerClientRelation> trainerClientRelations = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "type_id")
     private TrainerType type;
 
-    public Trainer(String username, String firstname, String lastname, int phone,char sex, String icon) {
-        super(username, firstname, lastname, phone, sex, icon);
+    private String description;
+
+    public Trainer(String username, String firstname, String lastname, int phone, char sex, String icon, String description, LocalDate birthDate) {
+        super(username, firstname, lastname, phone, sex, icon, birthDate);
+        this.description = description;
     }
 
+    public void addTrainerClientRelations(TrainerClientRelation trainerClientRelations) {
+        trainerClientRelations.setTrainer(this);
+        this.trainerClientRelations.add(trainerClientRelations);
+    }
 }

@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "/api/v1.0/trainings")
 public class TrainingController {
@@ -25,7 +27,7 @@ public class TrainingController {
 
     //Verbos POST
     @PostMapping
-    public ResponseEntity<Object> createNewTraining(@RequestBody NewTrainingDTO newTrainingDTO){
+    public ResponseEntity<Object> createNewTraining(@Valid @ModelAttribute NewTrainingDTO newTrainingDTO){
         return new ResponseEntity<>(trainingService.createNewTraining(newTrainingDTO), HttpStatus.CREATED);
     }
 
@@ -45,12 +47,9 @@ public class TrainingController {
         return new ResponseEntity<>(trainingService.getTrainingById(id), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping
-    public ResponseEntity<Object> getTrainings(@RequestParam(required = false, defaultValue = "") String catId,
-                                               @RequestParam(required = false, defaultValue = "") String difId,
-                                               @RequestParam(required = false, defaultValue = "") String name,
-                                               @RequestParam(required = false, defaultValue = "") String desc){
-        return new ResponseEntity<>(trainingService.getTrainingsByParams(new TrainingSearchParamsDTO(catId, difId, name, desc)), HttpStatus.ACCEPTED);
+    @PostMapping("/search")
+    public ResponseEntity<Object> getTrainings(@ModelAttribute TrainingSearchParamsDTO trainingSearchParamsDTO){
+        return new ResponseEntity<>(trainingService.getTrainingsByParams(trainingSearchParamsDTO), HttpStatus.OK);
     }
 
     //Verbos PATCH

@@ -43,42 +43,54 @@ public class TrainingServiceImpl implements TrainingService {
 
     //Implementar lógica
     @Override
-    public List<DetailedTrainingDTO> getTrainingsByParams(TrainingSearchParamsDTO paramsDTO) {
-        ValidatedTrainingSearchParamsDTO validParams = validateTrainingSearchParameters(paramsDTO);
-        List<DetailedTrainingDTO> trainings = new ArrayList<>();
+    public List<DetailedTrainingOutDTO> getTrainingsByParams(TrainingSearchParamsDTO paramsDTO) {
+//        ValidatedTrainingSearchParamsDTO validParams = validateTrainingSearchParameters(paramsDTO);
 
-        if(validParams.getCatId()==0 && validParams.getDifId()==0){
-            trainings = trainingRepository.findByNameContainsAndDescriptionContainsOrderById(validParams.getName(), validParams.getDesc()).stream().map(DetailedTrainingDTO::new).collect(Collectors.toList());
+        List<DetailedTrainingOutDTO> trainings = new ArrayList<>();
+
+        if(paramsDTO.getName().length()>0){
+            trainings = trainingRepository.findByNameContainsIgnoreCaseOrderById(paramsDTO.getName()).stream().map(DetailedTrainingOutDTO::new).collect(Collectors.toList());
+            return trainings;
         }
 
-        if(validParams.getCatId()!=0 && validParams.getDifId()==0){
-            trainings = trainingRepository.findByNameContainsAndDescriptionContainsAndTrainingCategoryRelationsCategoryIdEqualsOrderById(validParams.getName(), validParams.getDesc(), validParams.getCatId()).stream().map(DetailedTrainingDTO::new).collect(Collectors.toList());
+        if(paramsDTO.getDesc().length()>0){
+            trainings = trainingRepository.findByDescriptionContainsIgnoreCaseOrderById(paramsDTO.getDesc()).stream().map(DetailedTrainingOutDTO::new).collect(Collectors.toList());
+            return trainings;
         }
 
-        if(validParams.getCatId()==0 && validParams.getDifId()!=0){
-            trainings = trainingRepository.findByNameContainsAndDescriptionContainsAndDifficultyIdEqualsOrderById(validParams.getName(), validParams.getDesc(), validParams.getDifId()).stream().map(DetailedTrainingDTO::new).collect(Collectors.toList());
+        if(paramsDTO.getCategory().length()>0){
+            TrainingCategory tc = trainingCategoryRepository.findByNameIgnoreCase(paramsDTO.getCategory()).orElse(null);
+
+            if(tc!=null){
+                trainings = trainingRepository.findByTrainingCategoryRelationsCategoryIdEqualsOrderById(tc.getId()).stream().map(DetailedTrainingOutDTO::new).collect(Collectors.toList());
+                return trainings;
+            }
         }
 
-        if(validParams.getCatId()!=0 && validParams.getDifId()!=0){
-            trainings = trainingRepository.findByNameContainsAndDescriptionContainsAndTrainingCategoryRelationsCategoryIdEqualsAndDifficultyIdEqualsOrderById(validParams.getName(), validParams.getDesc(), validParams.getCatId(), validParams.getDifId()).stream().map(DetailedTrainingDTO::new).collect(Collectors.toList());
-        }
+        if(paramsDTO.getDifficulty().length()>0){
+            TrainingDifficulty td = trainingDifficultyRepository.findByNameIgnoreCase(paramsDTO.getDifficulty()).orElse(null);
 
+            if(td!=null){
+                trainings = trainingRepository.findByDifficultyIdEqualsOrderById(td.getId()).stream().map(DetailedTrainingOutDTO::new).collect(Collectors.toList());
+                return trainings;
+            }
+        }
 
         return trainings;
     }
 
     @Override
-    public Optional<DetailedTrainingDTO> getTrainingById(Long id) {
-        return Optional.ofNullable(trainingRepository.findById(id).map(DetailedTrainingDTO::new).orElse(null));
+    public Optional<DetailedTrainingOutDTO> getTrainingById(Long id) {
+        return trainingRepository.findById(id).map(DetailedTrainingOutDTO::new);
     }
 
     @Override
-    public List<DetailedTrainingDTO> findByNameContainsOrderById(String search){
-        return trainingRepository.findByNameContainsOrderById(search).stream().map(DetailedTrainingDTO::new).collect(Collectors.toList());
+    public List<DetailedTrainingOutDTO> findByNameContainsOrderById(String search){
+        return trainingRepository.findByNameContainsIgnoreCaseOrderById(search).stream().map(DetailedTrainingOutDTO::new).collect(Collectors.toList());
     }
 
     @Override
-    public List<DetailedTrainingDTO> getTrainingsByCategory(String category){
+    public List<DetailedTrainingOutDTO> getTrainingsByCategory(String category){
         return new ArrayList<>();
     }
 
@@ -103,35 +115,47 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public Optional<DetailedTrainingDTO> createNewTraining(NewTrainingDTO newTrainingDTO) {
+    public Optional<DetailedTrainingOutDTO> createNewTraining(NewTrainingDTO newTrainingDTO) {
 
-        Training training = new Training(setCurrentTime(),setCurrentTime(),true, newTrainingDTO.getName(), newTrainingDTO.getDescription(), newTrainingDTO.getDescription(), newTrainingDTO.getImageUrl(), newTrainingDTO.getEstTimePerRep(), newTrainingDTO.getEstCaloriesPerRep());
-
-        TrainingDifficulty trainingDifficulty = trainingDifficultyRepository.findById(newTrainingDTO.getDifficultyId()).orElse(null);
-
-        if(trainingDifficulty!=null){
-            training.setDifficulty(trainingDifficulty);
+        if(newTrainingDTO.getId()!=0){
+            throw new RuntimeException("Entrenamiento ya existe");
         }
+        else{
+            Training training = new Training(setCurrentTime(),setCurrentTime(),true, newTrainingDTO.getName(), newTrainingDTO.getDescription(), newTrainingDTO.getVideoUrl(), newTrainingDTO.getImageUrl(), newTrainingDTO.getEstTimePerRep(), newTrainingDTO.getEstCaloriesPerRep());
 
-        training = trainingRepository.save(training);
+            TrainingDifficulty trainingDifficulty = trainingDifficultyRepository.findByNameIgnoreCase(newTrainingDTO.getDifficulty()).orElse(null);
 
-        TrainingCategory trainingCategory = new TrainingCategory();
-        for (Long id: newTrainingDTO.getCategoryIds()
-             ) {
-            trainingCategory = trainingCategoryRepository.findById(id).orElse(null);
-
-            if(trainingCategory!=null){
-                trainingCategoryRelationRepository.save(new TrainingCategoryRelation(training, trainingCategory, setCurrentTime(),setCurrentTime()));
+            if(trainingDifficulty!=null){
+                training.setDifficulty(trainingDifficulty);
             }
-        }
 
-        //Mejorar el modelo para convertirlo correctamente, y no realizar tantas solicitudes al repositorio
-        training = trainingRepository.findById(training.getId()).orElse(null);
-        return Optional.of(new DetailedTrainingDTO(training));
+            training = trainingRepository.save(training);
+
+            int noCatCounter = 0;
+            for (String cat:
+                    newTrainingDTO.getCategories()) {
+
+
+                TrainingCategory trainingCategory = trainingCategoryRepository.findByNameIgnoreCase(cat).orElse(null);
+
+                if(trainingCategory!=null){
+                    trainingCategoryRelationRepository.save(new TrainingCategoryRelation(training, trainingCategory, setCurrentTime(),setCurrentTime()));
+                }
+
+                else if(noCatCounter == 0){
+                    noCatCounter++;
+                    TrainingCategory tc = trainingCategoryRepository.findById(1L).orElse(null);
+
+                    trainingCategoryRelationRepository.save(new TrainingCategoryRelation(training, tc, setCurrentTime(),setCurrentTime()));
+                }
+            }
+
+            return Optional.of(new DetailedTrainingOutDTO(training));
+        }
     }
 
     @Override
-    public Optional<DetailedTrainingDTO> updateTraining(JsonPatch newTrainingPatch, Long id) {
+    public Optional<DetailedTrainingOutDTO> updateTraining(JsonPatch newTrainingPatch, Long id) {
         Training training = trainingRepository.findById(id).orElse(null);
         if(training==null){
             return Optional.empty();
@@ -151,7 +175,7 @@ public class TrainingServiceImpl implements TrainingService {
         trainingRepository.save(training);
 
 
-        return Optional.of(new DetailedTrainingDTO(training));
+        return Optional.of(new DetailedTrainingOutDTO(training));
     }
 
     @Override
@@ -197,12 +221,26 @@ public class TrainingServiceImpl implements TrainingService {
         return "Ok";
     }
 
+    @Override
+    public List<DetailedTrainingOutDTO> getTrainingsById(TrainingsInDTO trainingsInDTO) {
+        List<DetailedTrainingOutDTO> trainingDTOList = new ArrayList<>();
+
+        for (Long trainingId:
+             trainingsInDTO.getTrainingIds()) {
+            getTrainingById(trainingId).ifPresent(trainingDTOList::add);
+
+        }
+
+
+        return trainingDTOList;
+    }
+
     private ValidatedTrainingSearchParamsDTO validateTrainingSearchParameters(TrainingSearchParamsDTO paramsDTO){
 
         ValidatedTrainingSearchParamsDTO validSearchParams = new ValidatedTrainingSearchParamsDTO();
 
-        validSearchParams.setCatId(validateLongParam(paramsDTO.getCatId(), trainingCategoryRepository));
-        validSearchParams.setDifId(validateLongParam(paramsDTO.getDifId(), trainingDifficultyRepository));
+        validSearchParams.setCatId(validateLongParam(paramsDTO.getCategory(), trainingCategoryRepository));
+        validSearchParams.setDifId(validateLongParam(paramsDTO.getDifficulty(), trainingDifficultyRepository));
 
         validSearchParams.setName(paramsDTO.getName());
         validSearchParams.setDesc(paramsDTO.getDesc());

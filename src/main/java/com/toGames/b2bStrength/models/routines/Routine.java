@@ -1,13 +1,22 @@
 package com.toGames.b2bStrength.models.routines;
 
 import com.toGames.b2bStrength.models.clients.ClientStatus;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Routine {
 
     @Id
@@ -15,15 +24,15 @@ public class Routine {
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
-    @OneToMany(mappedBy="routine", fetch= FetchType.EAGER)
-    private Set<TrainerClientRelation> trainerClientRelations;
+    @OneToOne(mappedBy = "routine", fetch = FetchType.EAGER)
+    private TrainerClientRelation trainerClientRelation;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "status_id")
     private RoutineStatus status;
 
     @OneToMany(mappedBy = "routine", fetch = FetchType.EAGER)
-    private Set<Daily> dailyActivities;
+    private Set<Daily> dailyActivities = new HashSet<>();
 
     private long numOfDays;
 
@@ -31,13 +40,15 @@ public class Routine {
 
     private LocalDate endDate;
 
-    public Routine() {
-    }
-
-    public Routine(long statusId, long numOfDays, LocalDate startDate, LocalDate endDate) {
+    public Routine(long numOfDays, LocalDate startDate) {
         this.numOfDays = numOfDays;
         this.startDate = startDate;
-        this.endDate = endDate;
+        this.endDate = startDate.plus(numOfDays, ChronoUnit.DAYS);
+    }
+
+    public void addDailyActivities(Daily dailyActivity) {
+        this.dailyActivities.add(dailyActivity);
+        dailyActivity.setRoutine(this);
     }
 
     public long getId() {
