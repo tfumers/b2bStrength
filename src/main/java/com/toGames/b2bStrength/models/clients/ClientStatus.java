@@ -27,4 +27,9 @@ public class ClientStatus {
     public ClientStatus(String status) {
         Status = status;
     }
+
+    public void addClient(Client client){
+        client.setStatus(this);
+        clients.add(client);
+    }
 }

@@ -3,7 +3,6 @@ package com.toGames.b2bStrength.models.clients;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -24,9 +23,9 @@ public class ClientSurveyInfo {
     @JoinColumn(name = "client_id")
     private Client client;
 
-    private double height;
+    private int height;
 
-    private double starter_weight;
+    private int starterWeight;
 
     private Boolean pregnancy;
 
@@ -38,20 +37,22 @@ public class ClientSurveyInfo {
 
     private String illnesses;
 
+    private String wounds;
     private String availableTrainingDays;
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    public ClientSurveyInfo(double height, double starter_weight, Boolean pregnancy, String trainingOrSportsRecord, String availableTrainingItems, String trainingObjectives, String illnesses, String availableTrainingDays, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ClientSurveyInfo(int height, int starterWeight, Boolean pregnancy, String trainingOrSportsRecord, String availableTrainingItems, String trainingObjectives, String illnesses, String wounds, String availableTrainingDays, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.height = height;
-        this.starter_weight = starter_weight;
+        this.starterWeight = starterWeight;
         this.pregnancy = pregnancy;
         this.trainingOrSportsRecord = trainingOrSportsRecord;
         this.availableTrainingItems = availableTrainingItems;
         this.trainingObjectives = trainingObjectives;
         this.illnesses = illnesses;
+        this.wounds = wounds;
         this.availableTrainingDays = availableTrainingDays;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;

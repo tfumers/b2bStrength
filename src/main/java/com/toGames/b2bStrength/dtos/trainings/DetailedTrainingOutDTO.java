@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DetailedTrainingDTO {
+public class DetailedTrainingOutDTO {
 
     private Long id;
 
@@ -28,7 +28,7 @@ public class DetailedTrainingDTO {
 
     private TrainingDifficultyDTO difficulty;
 
-    public DetailedTrainingDTO(Training training) {
+    public DetailedTrainingOutDTO(Training training) {
         this.id = training.getId();
         this.categories = training.getTrainingCategoryRelations().stream().map(TrainingCategoryRelationDTO::new).collect(Collectors.toSet());
         this.difficulty = new TrainingDifficultyDTO(training.getDifficulty());

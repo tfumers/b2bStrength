@@ -6,16 +6,17 @@ import com.toGames.b2bStrength.utils.Common;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 public class Training extends DatabaseCommon {
 
     @OneToMany(mappedBy="training", fetch= FetchType.EAGER)
-    private Set<Activity> activities;
+    private Set<Activity> activities = new HashSet<>();
 
     @OneToMany(mappedBy="training", fetch= FetchType.EAGER)
-    private Set<TrainingCategoryRelation> trainingCategoryRelations;
+    private Set<TrainingCategoryRelation> trainingCategoryRelations = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "difficulty_id")
@@ -111,6 +112,11 @@ public class Training extends DatabaseCommon {
 
     public void setActivities(Set<Activity> activities) {
         this.activities = activities;
+    }
+
+    public void addActivity(Activity activity) {
+        this.activities.add(activity);
+        activity.setTraining(this);
     }
 
     public Set<TrainingCategoryRelation> getTrainingCategoryRelations() {

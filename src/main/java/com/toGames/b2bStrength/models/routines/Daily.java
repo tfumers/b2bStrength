@@ -1,12 +1,19 @@
 package com.toGames.b2bStrength.models.routines;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Daily {
 
     @Id
@@ -19,21 +26,24 @@ public class Daily {
     private Routine routine;
 
     @OneToMany(mappedBy = "dailyActivity", fetch = FetchType.EAGER)
-    private Set<Activity> activities;
+    private Set<Activity> activities = new HashSet<>();
 
     private int dayNumber;
+
+    private long elapsedTime;
 
     private LocalDate proposedDate;
 
     private LocalDate completionDate;
 
-    public Daily() {
-    }
-
-    public Daily(long routineId, int dayNumber, LocalDate proposedDate, LocalDate completionDate) {
+    public Daily(int dayNumber, LocalDate proposedDate) {
         this.dayNumber = dayNumber;
         this.proposedDate = proposedDate;
-        this.completionDate = completionDate;
+    }
+
+    public void addActivity(Activity activity) {
+        this.activities.add(activity);
+        activity.setDailyActivity(this);
     }
 
     public long getId() {

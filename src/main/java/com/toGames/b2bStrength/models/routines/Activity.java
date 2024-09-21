@@ -1,11 +1,19 @@
 package com.toGames.b2bStrength.models.routines;
 
 import com.toGames.b2bStrength.models.trainings.Training;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Activity {
 
     @Id
@@ -21,44 +29,21 @@ public class Activity {
     @JoinColumn(name = "training_id")
     private Training training;
 
-    public int orderNumber;
-
+    private int orderNumber;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "type_id")
     private ActivityType type;
 
-    private long typeValue;
+    private int typeValue;
 
-    public Activity() {
-    }
+    private boolean isBonus;
 
-    public Activity(long dailyId, int orderNumber, long trainingId, long typeId, long typeValue) {
+    private boolean completed;
+
+    public Activity(int orderNumber, ActivityType activityType, int typeValue) {
         this.orderNumber = orderNumber;
-        this.typeValue = typeValue;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public int getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(int orderNumber) {
-        this.orderNumber = orderNumber;
-    }
-
-    public long getTypeValue() {
-        return typeValue;
-    }
-
-    public void setTypeValue(long typeValue) {
+        this.type = activityType;
         this.typeValue = typeValue;
     }
 }
